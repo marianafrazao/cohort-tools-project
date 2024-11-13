@@ -24,7 +24,7 @@ const studentSchema = new Schema({
       default: "",
     },
     languages:  {
-      type: Array,
+      type: [String],
       enum: ["English", "Spanish", "French", "German", "Portuguese", "Dutch", "Other"],
     },
     program: {
