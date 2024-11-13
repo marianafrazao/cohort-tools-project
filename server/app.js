@@ -73,6 +73,7 @@ app.post('/api/students', (req, res, next) => {
 // GET /api/students - Retrieves all of the students in the database collection
 app.get("/api/students", (req, res, next) => {
   Student.find()
+  .populate("cohort")
       .then((studentsFromDB) => {
           res.status(200).json(studentsFromDB);
       })
@@ -88,6 +89,7 @@ app.get("/api/students/cohort/:cohortId", (req, res, next) => {
   const {cohortId} = req.params;
 
   Student.find({cohort: cohortId})
+      .populate("cohort")
       .then((studentsFromDB) => {
           res.status(200),json(studentsFromDB);
       })
@@ -103,6 +105,7 @@ app.get("/api/students/:studentId", (req, res, next) => {
   const {studentId} = req.params;
 
   Student.findById(studentId)
+      .populate("cohort")
       .then((studentsFromDB) => {
           res.status(200),json(studentsFromDB);
       })

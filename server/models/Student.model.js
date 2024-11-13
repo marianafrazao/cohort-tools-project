@@ -39,8 +39,10 @@ const studentSchema = new Schema({
       type: String,
       default: "https://i.imgur.com/r8bo8u7.png",
     },
-    
-    cohort: Schema.Types.ObjectId,
+    cohort: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cohort"
+    },
     projects: Array,
   });
   
