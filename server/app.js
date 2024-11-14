@@ -11,7 +11,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 mongoose
-.connect("mongodb://127.0.0.1:27017/mongoose-intro-dev")
+.connect("mongodb://127.0.0.1:27017/cohort-tools-api")
 .then(x => console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`))
 .catch(err => console.error("Error connecting to mongo", err));
 
@@ -107,7 +107,7 @@ app.get("/api/students/:studentId", (req, res, next) => {
   Student.findById(studentId)
       .populate("cohort")
       .then((studentsFromDB) => {
-          res.status(200),json(studentsFromDB);
+          res.status(200).json(studentsFromDB);
       })
       .catch(error => {
           console.log(error);
@@ -183,7 +183,7 @@ app.get("/api/cohorts/:cohortId", (req, res, next) => {
 
   Cohort.findById(cohortId)
       .then((cohortsFromDB) => {
-          res.status(200),json(cohortsFromDB);
+          res.status(200).json(cohortsFromDB);
       })
       .catch(error => {
           console.log(error);
