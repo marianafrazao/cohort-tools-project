@@ -182,7 +182,7 @@ app.get("/api/cohorts/:cohortId", (req, res, next) => {
 
   Cohort.findById(cohortId)
     .then((cohortsFromDB) => {
-      res.status(200), json(cohortsFromDB);
+      res.status(200).json(cohortsFromDB);
     })
     .catch((error) => {
       next(error);
