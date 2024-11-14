@@ -6,7 +6,10 @@ const cookieParser = require("cookie-parser");
 const Student = require("./models/Student.model");
 const Cohort = require("./models/Cohort.model");
 const cors = require("cors");
-
+const {
+  errorHandler,
+  notFoundHandler,
+} = require("./middleware/error-handling");
 
 const mongoose = require("mongoose");
 
@@ -18,16 +21,13 @@ mongoose
 
 const PORT = 5005;
 
-
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
 
-
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
-app.use(cors());
-
+app.use(cors({ origin: ["http://localhost:5173"] }));
 
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
@@ -37,7 +37,6 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
@@ -56,174 +55,174 @@ app.get("/docs", (req, res) => {
 
 // STUDENTS ROUTES
 // POST /api/students - Creates a new student
-app.post('/api/students', (req, res, next) => {
-
+app.post("/api/students", (req, res, next) => {
   const newStudent = req.body;
 
   Student.create(newStudent)
-  .then((studentFromDB) => {
+    .then((studentFromDB) => {
       res.status(201).json(studentFromDB);
-  })
-  .catch(error => {
-      console.log(error)
-      res.status(500).json({error: "Failed to create a new student"})
-  })
+    })
+    .catch((error) => {
+      next(error);
+      res.status(500).json({ error: "Failed to create a new student" });
+    });
 });
 
 // GET /api/students - Retrieves all of the students in the database collection
 app.get("/api/students", (req, res, next) => {
   Student.find()
-  .populate("cohort")
-      .then((studentsFromDB) => {
-          res.status(200).json(studentsFromDB);
-      })
-      .catch(error => {
-          console.log(error);
-          res.status(500).json({ error: "Failed to get list of students" });
-      });
-})
+    .populate("cohort")
+    .then((studentsFromDB) => {
+      res.status(200).json(studentsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      res.status(500).json({ error: "Failed to get list of students" });
+    });
+});
 
 // GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
 app.get("/api/students/cohort/:cohortId", (req, res, next) => {
+  const { cohortId } = req.params;
 
-  const {cohortId} = req.params;
-
-  Student.find({cohort: cohortId})
-      .populate("cohort")
-      .then((studentsFromDB) => {
-          res.status(200),json(studentsFromDB);
-      })
-      .catch(error => {
-          console.log(error);
-          res.status(500).json({ error: "Failed to get this students list" });
-      });
-})
+  Student.find({ cohort: cohortId })
+    .populate("cohort")
+    .then((studentsFromDB) => {
+      res.status(200), json(studentsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.log(error);
+      res.status(500).json({ error: "Failed to get this students list" });
+    });
+});
 
 // GET /api/students/:studentId - Retrieves a specific student by id
 app.get("/api/students/:studentId", (req, res, next) => {
-
-  const {studentId} = req.params;
+  const { studentId } = req.params;
 
   Student.findById(studentId)
-      .populate("cohort")
-      .then((studentsFromDB) => {
-          res.status(200).json(studentsFromDB);
-      })
-      .catch(error => {
-          console.log(error);
-          res.status(500).json({ error: "Failed to get this student details" });
-      });
-})
+    .populate("cohort")
+    .then((studentsFromDB) => {
+      res.status(200), json(studentsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.log(error);
+      res.status(500).json({ error: "Failed to get this student details" });
+    });
+});
 
 // PUT /api/students/:studentId - Updates a specific student by id
 app.put("/api/students/:studentId", (req, res, next) => {
-
   const { studentId } = req.params;
   const newDetails = req.body;
 
   Student.findByIdAndUpdate(studentId, newDetails, { new: true })
-      .then((studentsFromDB) => {
-          res.status(200).json(studentsFromDB);
-      })
-      .catch((error) => {
-          console.error(error);
-          res.status(500).json({ error: "Failed to update the student" });
-      });
+    .then((studentsFromDB) => {
+      res.status(200).json(studentsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.error(error);
+      res.status(500).json({ error: "Failed to update the student" });
+    });
 });
 
 // DELETE /api/students/:studentId - Deletes a specific student by id
 app.delete("/api/students/:studentId", (req, res, next) => {
-
   const { studentId } = req.params;
 
   Student.findByIdAndDelete(studentId)
-      .then(() => {
-          res.status(204).send();
-      })
-      .catch((error) => {
-          console.error("Error deleting student...");
-          console.error(error);
-          res.status(500).json({ error: "Failed to delete student" });
-      });
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((error) => {
+      next(error);
+      console.error("Error deleting student...");
+      console.error(error);
+      res.status(500).json({ error: "Failed to delete student" });
+    });
 });
 
 // COHORT ROUTES
 // POST /api/cohorts - Creates a new cohort
-app.post('/api/cohorts', (req, res, next) => {
-
+app.post("/api/cohorts", (req, res, next) => {
   const newCohort = req.body;
 
   Cohort.create(newCohort)
-  .then((cohortFromDB) => {
+    .then((cohortFromDB) => {
       res.status(201).json(cohortFromDB);
-  })
-  .catch(error => {
-      console.log(error)
-      res.status(500).json({error: "Failed to create a new cohort"})
-  })
+    })
+    .catch((error) => {
+      next(error);
+      console.log(error);
+      res.status(500).json({ error: "Failed to create a new cohort" });
+    });
 });
 
 // GET /api/cohorts - Retrieves all of the cohorts in the database collection
 app.get("/api/cohorts", (req, res, next) => {
   Cohort.find()
-      .then((cohortsFromDB) => {
-          res.status(200).json(cohortsFromDB);
-      })
-      .catch(error => {
-          console.log(error);
-          res.status(500).json({ error: "Failed to get list of cohorts" });
-      });
-})
-
+    .then((cohortsFromDB) => {
+      res.status(200).json(cohortsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.log(error);
+      res.status(500).json({ error: "Failed to get list of cohorts" });
+    });
+});
 
 // GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
 app.get("/api/cohorts/:cohortId", (req, res, next) => {
-
-  const {cohortId} = req.params;
+  const { cohortId } = req.params;
 
   Cohort.findById(cohortId)
-      .then((cohortsFromDB) => {
-          res.status(200).json(cohortsFromDB);
-      })
-      .catch(error => {
-          console.log(error);
-          res.status(500).json({ error: "Failed to get this cohort details" });
-      });
-})
+    .then((cohortsFromDB) => {
+      res.status(200).json(cohortsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.log(error);
+      res.status(500).json({ error: "Failed to get this cohort details" });
+    });
+});
 
 // PUT /api/cohorts/:cohortId - Updates a specific cohort by id
 app.put("/api/cohorts/:cohortId", (req, res, next) => {
-
   const { cohortId } = req.params;
   const newDetails = req.body;
 
   Cohort.findByIdAndUpdate(cohortId, newDetails, { new: true })
-      .then((cohortsFromDB) => {
-          res.status(200).json(cohortsFromDB);
-      })
-      .catch((error) => {
-          console.error(error);
-          res.status(500).json({ error: "Failed to update the cohort" });
-      });
+    .then((cohortsFromDB) => {
+      res.status(200).json(cohortsFromDB);
+    })
+    .catch((error) => {
+      next(error);
+      console.error(error);
+      res.status(500).json({ error: "Failed to update the cohort" });
+    });
 });
-
 
 // DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
 app.delete("/api/cohorts/:cohortId", (req, res, next) => {
-
   const { cohortId } = req.params;
 
   Cohort.findByIdAndDelete(cohortId)
-      .then(() => {
-          res.status(204).send();
-      })
-      .catch((error) => {
-          console.error("Error deleting cohort...");
-          console.error(error);
-          res.status(500).json({ error: "Failed to delete cohort" });
-      });
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((error) => {
+      next(error);
+      console.error("Error deleting cohort...");
+      console.error(error);
+      res.status(500).json({ error: "Failed to delete cohort" });
+    });
 });
 
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // START SERVER
 app.listen(PORT, () => {
