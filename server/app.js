@@ -26,7 +26,7 @@ const PORT = 5005;
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
-app.use(cors());
+app.use(cors({origin: ['http://localhost:5173']}));
 
 
 // MIDDLEWARE
