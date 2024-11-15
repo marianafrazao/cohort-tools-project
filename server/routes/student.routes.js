@@ -1,8 +1,11 @@
 const router = require('express').Router();
 const Student = require("../models/Student.model");
+const { isAuthenticated } = require("../middleware/jwt");
+
+
 // STUDENTS ROUTES
 // POST /api/students - Creates a new student
-router.post("/api/students", (req, res, next) => {
+router.post("/api/students", isAuthenticated, (req, res, next) => {
     const newStudent = req.body;
   
     Student.create(newStudent)
@@ -61,7 +64,7 @@ router.post("/api/students", (req, res, next) => {
   });
   
   // PUT /api/students/:studentId - Updates a specific student by id
-  router.put("/api/students/:studentId", (req, res, next) => {
+  router.put("/api/students/:studentId", isAuthenticated, (req, res, next) => {
     const { studentId } = req.params;
     const newDetails = req.body;
   
@@ -77,7 +80,7 @@ router.post("/api/students", (req, res, next) => {
   });
   
   // DELETE /api/students/:studentId - Deletes a specific student by id
-  router.delete("/api/students/:studentId", (req, res, next) => {
+  router.delete("/api/students/:studentId", isAuthenticated, (req, res, next) => {
     const { studentId } = req.params;
   
     Student.findByIdAndDelete(studentId)

@@ -1,18 +1,18 @@
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
+const cors = require("cors");
 // const cohorts = require("./cohorts.json")
 // const students = require("./students.json")
 const Student = require("./models/Student.model");
 const Cohort = require("./models/Cohort.model");
 const User = require("./models/User.model")
-const cors = require("cors");
 const {
   errorHandler,
   notFoundHandler,
 } = require("./middleware/error-handling");
 
-const mongoose = require("mongoose");
 
 mongoose
 .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
