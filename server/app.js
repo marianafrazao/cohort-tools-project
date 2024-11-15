@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 // const students = require("./students.json")
 const Student = require("./models/Student.model");
 const Cohort = require("./models/Cohort.model");
+const User = require("./models/User.model")
 const cors = require("cors");
 const {
   errorHandler,
@@ -64,3 +65,4 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
