@@ -20,6 +20,7 @@ mongoose
 .catch(err => console.error("Error connecting to mongo", err));
 
 
+
 const PORT = 5005;
 
 // STATIC DATA
