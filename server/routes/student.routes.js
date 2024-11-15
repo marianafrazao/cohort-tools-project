@@ -5,7 +5,7 @@ const { isAuthenticated } = require("../middleware/jwt");
 
 // STUDENTS ROUTES
 // POST /api/students - Creates a new student
-router.post("/api/students", isAuthenticated, (req, res, next) => {
+router.post("/api/students", (req, res, next) => {
     const newStudent = req.body;
   
     Student.create(newStudent)
