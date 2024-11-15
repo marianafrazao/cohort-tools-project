@@ -4,7 +4,7 @@ const { isAuthenticated } = require("../middleware/jwt");
 
 // COHORT ROUTES
 // POST /api/cohorts - Creates a new cohort
-router.post("/api/cohorts", isAuthenticated, (req, res, next) => {
+router.post("/api/cohorts", (req, res, next) => {
     const newCohort = req.body;
   
     Cohort.create(newCohort)
