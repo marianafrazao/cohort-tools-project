@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 // const cohorts = require("./cohorts.json")
 // const students = require("./students.json")
 const Student = require("./models/Student.model");
@@ -56,6 +57,8 @@ app.get("/docs", (req, res) => {
 // });
 app.use("/", require("./routes/cohort.routes"));
 app.use("/", require("./routes/student.routes"));
+app.use("/", require("./routes/user.routes"));
+app.use("/auth", require("./routes/auth.routes"));
 
 
 app.use(notFoundHandler);
